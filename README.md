@@ -36,6 +36,7 @@ git clone https://github.com/voukatas/go-ja4.git
 cd go-ja4
 
 go mod tidy
+cd cmd
 go build -o ja4tool
 
 ```
@@ -50,7 +51,12 @@ sudo ./ja4tool
 ```
 ## Testing
 
-Currently, Wireshark traces from the [FoxIO blog](https://blog.foxio.io/) are used to manually test the tool. Integration with automated testing is a planned enhancement.
+Currently, Wireshark traces from the [FoxIO blog](https://blog.foxio.io/) are used to manually test the tool and some of them are integrated to automated tests. Integration with full automated testing is a planned enhancement.
+
+```bash
+cd go-ja4
+go test -cover -v -race ./...
+```
 
 
 ## Limitations
@@ -59,8 +65,8 @@ Currently, Wireshark traces from the [FoxIO blog](https://blog.foxio.io/) are us
 - Automated testing and benchmarking are not yet implemented.
 
 ## To-Do
-- Restructure the project for better modularity.
-- Add unit and integration tests.
+~- Restructure the project for better modularity.~
+~- Add unit and integration tests.~
 - Extend support for QUIC/UDP traffic.
 - Automate testing with real-world traffic captures.
 
