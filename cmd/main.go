@@ -9,10 +9,17 @@ import (
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
 	"github.com/google/gopacket/tcpassembly"
+	"github.com/voukatas/go-ja4/internal/parser"
 	"github.com/voukatas/go-ja4/internal/tcp"
 )
 
 func main() {
+
+	// Load FingerPrints
+	ja4Map, ja4sMap, err := parser.LoadFingerPrints("fingerprints.json")
+	if err != nil {
+		panic(err)
+	}
 
 	// If too much memory is used change to 1600
 	handle, err := pcap.OpenLive("enp0s3", 65535, true, pcap.BlockForever)
@@ -29,7 +36,10 @@ func main() {
 	}
 
 	// Till here is normal flow
-	streamFactory := &tcp.StreamFactory{}
+	streamFactory := &tcp.StreamFactory{
+		JA4Map:  ja4Map,
+		JA4SMap: ja4sMap,
+	}
 	streamPool := tcpassembly.NewStreamPool(streamFactory)
 	assembler := tcpassembly.NewAssembler(streamPool)
 

@@ -9,12 +9,14 @@ import (
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/tcpassembly/tcpreader"
+	"github.com/voukatas/go-ja4/internal/model"
+	"github.com/voukatas/go-ja4/internal/parser"
 	"github.com/voukatas/go-ja4/pkg/ja4"
 )
 
 const maxBufferSize = 16 * 1024 // 16 KB
 
-func processStream(r *tcpreader.ReaderStream, net gopacket.Flow) {
+func processStream(r *tcpreader.ReaderStream, net gopacket.Flow, ja4Map, ja4sMap map[string]*model.FingerprintRecord) {
 	// fmt.Printf("Processing stream from %v to %v\n", net.Src(), net.Dst())
 	// defer fmt.Printf("Finished processing stream from %v to %v\n", net.Src(), net.Dst())
 	var buffer bytes.Buffer
@@ -71,6 +73,9 @@ func processStream(r *tcpreader.ReaderStream, net gopacket.Flow) {
 					fmt.Println("Error parsing TLS Client Hello:", err)
 				} else {
 					fmt.Printf("JA4 Fingerprint: %s network: %v\n", ja4Fingerprint, net)
+					if val := ja4Map[ja4Fingerprint]; val != nil {
+						parser.PrintRecord(val)
+					}
 				}
 
 				// Remove the processed data from the buffer
@@ -87,6 +92,9 @@ func processStream(r *tcpreader.ReaderStream, net gopacket.Flow) {
 				} else {
 					//fmt.Printf("JA4S Fingerprint: %s\n", ja4sFingerprint)
 					fmt.Printf("JA4S Fingerprint: %s network: %v\n", ja4sFingerprint, net)
+					if val := ja4sMap[ja4sFingerprint]; val != nil {
+						parser.PrintRecord(val)
+					}
 				}
 
 				// Remove the processed data from the buffer
